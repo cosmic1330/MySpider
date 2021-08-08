@@ -47,6 +47,7 @@ python getEPSData/index.py
 符合以上條件後你就可以執行
 ```cmd
 python getPrice/index.py
+python getPrice/index.py -r
 ```
 > 你可能需要執行多次，因為Selenium不穩定
 

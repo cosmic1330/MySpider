@@ -5,6 +5,7 @@ from utils.requestPrice import requestPrice
 from utils.spiderMain import spiderMain
 from utils.spiderForeign import spiderForeign
 import json
+import sys
 
 
 # ---------------------------------------------------------------
@@ -36,6 +37,8 @@ try:
     listKeys = JsonData['keys']
     temps = {}
     fails = []
+    if(len(sys.argv)>1):
+        listKeys = reversed(listKeys)
 
     for key in listKeys:
         print('Now stock:'+key)
