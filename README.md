@@ -79,3 +79,9 @@ python .\getPrice\checkData.py
 搜尋到1101:
 python .\getPrice\checkData.py 1101
 ```
+
+## Docker Image
+```cmd
+docker build -t myspider .
+docker run -p --name myspidercontainer 4000:9527 myspider
+```
