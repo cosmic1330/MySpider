@@ -1,5 +1,5 @@
 const fs = require("fs");
-let rawdata = fs.readFileSync("./aa.json");
+let rawdata = fs.readFileSync("./datas/Price/data.json");
 let jsonData = JSON.parse(rawdata);
 let keys = Object.keys(jsonData)
 

@@ -4,7 +4,7 @@
 - getEPSData: 
     - 功能: 使用Request取得EPS股票代號
     - 條件: 去年及今年EPS為正的股票
-- getPrice:
+- getPrice: (停止支援 請使用getTWSE)
     - 功能: 使用Selenium更新每日股票需要的資料
     - 條件: 包含
         - t: 交易日期
@@ -17,6 +17,8 @@
         - sumING: 投信購買張數
         - stockAgentMainPower: 主力購買張數
         - skp5: 主力5日集中
+- getTWSE:
+    - 功能: 抓取證交所資料
 
 ---
 

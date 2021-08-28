@@ -27,8 +27,8 @@ def default(key, last):
 
 # first.開啟Chrome drive
 chrome_options  = webdriver.ChromeOptions()
-chrome_options .add_argument('--headless')
-driver = webdriver.Chrome()
+chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+driver = webdriver.Chrome(options=chrome_options)
 
 try:
     # 1.取得本地檔案資料
@@ -72,13 +72,13 @@ try:
     ##
     #  II. 爬取主力資料並加入
     ##
-
+        
         # 1.取得爬蟲主力資料
         table = spiderMain(key,driver)
         # 2.如果取得資料失敗則跳過此股票
         if(table==False):
             fails.append(key)
-            continue
+            # continue
         else:
         # 3.依時間整合資料到temps
             for idx,li in enumerate(temps[key]):
@@ -122,7 +122,7 @@ try:
     #  V. 寫入json
     ##
         j = json.dumps(listData)
-        f = open("./datas/Price/data.json", 'w', encoding='UTF-8')
+        f = open("./datas/Price/datatemp.json", 'w', encoding='UTF-8')
         f.write(j)
         f.close()
         print('writed')
