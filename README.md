@@ -81,7 +81,13 @@ python .\getPrice\checkData.py
 搜尋到1101:
 python .\getPrice\checkData.py 1101
 ```
-
+## Program: getTWSE
+### Getting Started
+```cmd
+python getTWSE/index.py
+node getTWSE/filter.js
+node getTWSE/run.js
+```
 ## Docker Image
 ```cmd
 docker build -t myspider .
