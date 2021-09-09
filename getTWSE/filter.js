@@ -22,7 +22,8 @@ fs.writeFile(
       if (error) {
         console.log("文件寫入失敗");
       } else {
-        console.log("寫入成功，你你可以將data.json進行處理");
+        fs.unlink("datas/TWSE/datatemp.json",()=> console.log("寫入成功，你可以將data.json進行處理"));
+       
       }
     }
   );

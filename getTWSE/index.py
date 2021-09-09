@@ -9,6 +9,7 @@ import time
 
 try:
     # 1.取得本地檔案資料
+    print("執行中...")
     JsonData = getLocalJSON()
     listData = JsonData['data']
     stocks = JsonData['keys']
@@ -30,6 +31,7 @@ try:
     missDates = list(unique_set)
 
     # 3.取得TWSE的法人資料
+    print("抓取資料...")
     for miss in missDates:
         timer = random.randint(1,5)
         time.sleep(timer)

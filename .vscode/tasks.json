@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1-執行爬蟲",
+      "type": "shell",
+      "command": "python getTWSE/index.py",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "2-資料處理",
+      "type": "shell",
+      "command": "node getTWSE/filter.js",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "3-資料分析",
+      "type": "shell",
+      "command": "node getTWSE/run.js",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "4-取得季報表",
+      "type": "shell",
+      "command": "python getEPSData/index.py",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "資料檢查",
+      "type": "shell",
+      "command": "node getTWSE/checkDataContent.js",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    }
+  ]
+}

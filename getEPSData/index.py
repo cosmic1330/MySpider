@@ -5,6 +5,7 @@ from utils.checkKey import dicCheckKey
 import json
 
 """ 爬蟲：這今年即去年eps """
+print("執行中...")
 # 連線
 r = requests.get("https://www.cnyes.com/twstock/financial4.aspx") #將此頁面的HTML GET下來
 soup = BeautifulSoup(r.text,"html.parser") #將網頁資料以html.parser
@@ -22,6 +23,7 @@ now = options[i].text
 nowSeason = now[5:]
 before = options[i+int(nowSeason)].text
 
+print("取得資料...")
 for season in [now,before]:
     items = getSeasonEps(season)
     for item in items:
@@ -34,6 +36,7 @@ for stock in dic:
     if(float(dic[stock][0]) > 0 and float(dic[stock][1]) > 0):
         response["dataList"].append(stock)
 
+print("寫入資料...")
 # 寫入json
 j = json.dumps(response)
 f = open("./datas/Eps/data.json", 'w', encoding='UTF-8')
