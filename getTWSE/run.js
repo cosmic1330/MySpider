@@ -8,18 +8,18 @@ let keys = JSON.parse(rawdata2).dataList;
 let arr = [];
 keys.forEach((key) => {
   let stock = jsonData[key];
-  if(!stock) return;
+  if (!stock) return;
   let length = stock.length;
   if (
-    stock[length - 1]["sumING"] > 100 &&
-    stock[length - 2]["sumING"] > 100 &&
-    stock[length - 3]["sumING"] > 100
+    (stock[length - 1]["sumING"] > 100 &&
+      stock[length - 2]["sumING"] > 100 &&
+      stock[length - 3]["sumING"] > 100) 
   ) {
     arr.push({
-      stock: key,
       date: stock[length - 1]["t"],
-      name: stock[length - 1]["name"],
       price: stock[length - 1]["c"],
+      ING:stock[length - 1]["sumING"],
+      name: key+' '+stock[length - 1]["name"],
     });
   }
 });
