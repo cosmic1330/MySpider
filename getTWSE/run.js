@@ -1,26 +1,27 @@
 const fs = require("fs");
-let rawdata = fs.readFileSync("./datas/TWSE/data.json");
-let jsonData = JSON.parse(rawdata);
+let twseJsonData = fs.readFileSync("./datas/TWSE/data.json");
+let twseData = JSON.parse(twseJsonData);
 
-let rawdata2 = fs.readFileSync("./datas/Eps/data.json");
-let keys = JSON.parse(rawdata2).dataList;
+let epsJsonData = fs.readFileSync("./datas/Eps/data.json");
+let epsData = JSON.parse(epsJsonData).dataList;
 
-let arr = [];
-keys.forEach((key) => {
-  let stock = jsonData[key];
-  if (!stock) return;
-  let length = stock.length;
+let purchaseList = [];
+epsData.forEach((stockId) => {
+  let stockData = twseData[stockId];
+  if (!stockData) return;
+
+  let length = stockData.length;
   if (
-    (stock[length - 1]["sumING"] > 100 &&
-      stock[length - 2]["sumING"] > 100 &&
-      stock[length - 3]["sumING"] > 100) 
+    stockData[length - 1]["sumING"] > 100 &&
+    stockData[length - 2]["sumING"] > 100 &&
+    stockData[length - 3]["sumING"] > 100
   ) {
-    arr.push({
-      date: stock[length - 1]["t"],
-      price: stock[length - 1]["c"],
-      ING:stock[length - 1]["sumING"],
-      name: key+' '+stock[length - 1]["name"],
+    purchaseList.push({
+      date: stockData[length - 1]["t"],
+      price: stockData[length - 1]["c"],
+      ING: stockData[length - 1]["sumING"],
+      [stockId]: stockData[length - 1]["name"],
     });
   }
 });
-console.log(arr);
+console.log(purchaseList);

@@ -38,11 +38,11 @@
       }
     },
     {
-      "label": "資料檢查",
+      "label": "5-資料檢查",
       "type": "shell",
       "command": "node getTWSE/checkDataContent.js",
       "group": {
-        "kind": "test",
+        "kind": "build",
         "isDefault": true
       }
     }
