@@ -20,7 +20,16 @@
       }
     },
     {
-      "label": "3-資料分析",
+      "label": "3-資料轉換",
+      "type": "shell",
+      "command": "node getTWSE/formatNumber.js",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "4-資料分析",
       "type": "shell",
       "command": "node getTWSE/run.js",
       "group": {
@@ -29,7 +38,7 @@
       }
     },
     {
-      "label": "4-取得季報表",
+      "label": "a-取得季報表",
       "type": "shell",
       "command": "python getEPSData/index.py",
       "group": {
@@ -38,7 +47,7 @@
       }
     },
     {
-      "label": "5-資料檢查",
+      "label": "b-資料檢查",
       "type": "shell",
       "command": "node getTWSE/checkDataContent.js",
       "group": {

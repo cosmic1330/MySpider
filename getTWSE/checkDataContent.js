@@ -6,6 +6,7 @@ let keys = Object.keys(jsonData);
 let days = [];
 let error = [];
 keys.forEach((key) => {
+  days = [];
   for (let i = 0; i < jsonData[key].length; i++) {
     const element = jsonData[key][i];
     if (
@@ -22,9 +23,13 @@ keys.forEach((key) => {
       error.push(key);
       break;
     }
+    
     // check current days
-    if (key === "1101") {
+    if (!days.includes(element["t"])) {
       days.push(element["t"]);
+    }else{
+      error.push(key);
+      break;
     }
   }
 });
