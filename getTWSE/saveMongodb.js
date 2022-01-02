@@ -30,6 +30,10 @@ fs.writeFile(
 );
 
 // save db
+
+let epsJsonData = fs.readFileSync("./datas/Eps/data.json");
+let epsData = JSON.parse(epsJsonData).dataList;
+
 for (const k in envConfig) {
   process.env[k] = envConfig[k];
 }
@@ -42,38 +46,40 @@ MongoClient.connect(MONGODB_URI, function (err, client) {
   console.log("mongodb is running!");
   const db = client.db(MONGODB_DB);
 
-  for (const i in temp) {
-    if (Object.hasOwnProperty.call(temp, i)) {
-      const element = temp[i];
+  epsData.forEach(
+    (i) => {
+      if (Object.hasOwnProperty.call(temp, i)) {
+        const element = temp[i];
 
-      // delete data
-      db.collection(i)
-        .deleteMany({})
-        .then((res) => console.log({ ...res, id: i }));
+        // delete data
+        db.collection(i)
+          .deleteMany({})
+          .then((res) => console.log({ ...res, id: i }));
 
-      // if no collection
-      // db.createCollection(i);
+        // if no collection
+        // db.createCollection(i);
 
-      // insert data
-      db.collection(i)
-        .insertMany(element)
-        .then((res) =>
-          console.log({
-            acknowledged: res.acknowledged,
-            insertedCount: res.insertedCount,
-            id: i,
-          })
-        );
+        // insert data
+        db.collection(i)
+          .insertMany(element)
+          .then((res) =>
+            console.log({
+              acknowledged: res.acknowledged,
+              insertedCount: res.insertedCount,
+              id: i,
+            })
+          );
+      }
     }
-  }
 
-  // db.collection("alldate")
-  //   .find()
-  //   .sort({ metacritic: -1 })
-  //   .limit(20)
-  //   .toArray()
-  //   .then((res) => {
-  //     console.log(res);
-  //     client.close();
-  //   });
+    // db.collection("1101")
+    //   .find()
+    //   .sort({ metacritic: -1 })
+    //   .limit(20)
+    //   .toArray()
+    //   .then((res) => {
+    //     console.log(res);
+    //     client.close();
+    //   });
+  );
 });
