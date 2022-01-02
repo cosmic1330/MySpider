@@ -20,6 +20,9 @@ try:
     temp = {}
     change = []
     for stock in stocks:
+        # error skip
+        # if(stock=="2823"):
+        #     continue
         temp[stock] = {}
         yahooData = yahooPrice(stock)
         dates = yahooData.keys()
