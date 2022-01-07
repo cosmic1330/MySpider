@@ -19,19 +19,21 @@ try:
     missDates = []
     temp = {}
     change = []
+    error = []
     for stock in stocks:
-        # error skip
-        # if(stock=="2823"):
-        #     continue
+        
         temp[stock] = {}
         yahooData = yahooPrice(stock)
         dates = yahooData.keys()
-        for date in dates:
-            if(date not in listData[stock]):
-                loseKeys[stock] = date
-                change.append(stock)
-                missDates.append(date)
-                temp[stock][date] = yahooData[date]
+        if(len(dates)): # error skip
+            change.append(stock)
+        else:
+            for date in dates:
+                if(date not in listData[stock]):
+                    loseKeys[stock] = date
+                    change.append(stock)
+                    missDates.append(date)
+                    temp[stock][date] = yahooData[date]
     unique_set = set(missDates)
     missDates = list(unique_set)
     print("股票與缺少日期:")
@@ -64,8 +66,9 @@ try:
     f = open("./datas/TWSE/datatemp.json", 'w', encoding='UTF-8')
     f.write(j)
     f.close()
+    print('錯誤的股票:')
+    print(error)
     print('Step not finish, Please run `node getTWSE/filter.js`')
 except ValueError :
     print(ValueError)
     print("Fail")
-    # driver.close()
