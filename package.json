@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/cosmic1330/MySpider#readme",
   "dependencies": {
+    "@ch20026103/anysis": "^0.0.1",
     "dotenv": "^10.0.0",
     "mongodb": "^4.2.2"
   }

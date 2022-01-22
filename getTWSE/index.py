@@ -21,11 +21,10 @@ try:
     change = []
     error = []
     for stock in stocks:
-        
         temp[stock] = {}
         yahooData = yahooPrice(stock)
         dates = yahooData.keys()
-        if(len(dates)): # error skip
+        if(len(dates)==0): # error skip
             change.append(stock)
         else:
             for date in dates:
