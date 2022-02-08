@@ -9,7 +9,41 @@ let epsData = JSON.parse(epsJsonData).dataList;
 let ma = new Ma();
 let williams = new Williams();
 
-/* bolling */
+/* k sell */
+let purchaseList2 = [];
+epsData.forEach((stockId) => {
+  let stockData = twseData[stockId];
+  if (!stockData) return;
+  let williamsData = williams.getAllWillams(stockData);
+
+  let length = stockData.length;
+  if (
+    stockData[length - 1]["v"] > 1000 &&
+    stockData[length - 1]["h"] < stockData[length - 2]["h"] &&
+    stockData[length - 1]["l"] < stockData[length - 2]["l"] &&
+    (williamsData[williamsData.length - 2].williams9 > -10 ||
+      williamsData[williamsData.length - 3].williams9 > -10) &&
+    (williamsData[williamsData.length - 2].williams18 > -10 ||
+      williamsData[williamsData.length - 3].williams18 > -10)
+  ) {
+    purchaseList2.push({
+      date: stockData[length - 1]["t"],
+      price: stockData[length - 1]["c"],
+      I: stockData[length - 1]["sumING"],
+      [stockId]: stockData[length - 1]["name"],
+      F: stockData[length - 1]["sumForeignNoDealer"],
+    });
+  }
+});
+console.log(
+  "Method: K線反轉(賣)\n",
+  "----------------------------\n",
+  purchaseList2,
+  "\n",
+  "----------------------------\n"
+);
+
+/* k buy */
 let purchaseList1 = [];
 epsData.forEach((stockId) => {
   let stockData = twseData[stockId];
@@ -19,6 +53,7 @@ epsData.forEach((stockId) => {
 
   let length = stockData.length;
   if (
+    stockData[length - 1]["v"] > 1000 &&
     stockData[length - 1]["h"] > stockData[length - 2]["h"] &&
     stockData[length - 1]["l"] > stockData[length - 2]["l"] &&
     (williamsData[williamsData.length - 2].williams9 < -80 ||
@@ -37,7 +72,7 @@ epsData.forEach((stockId) => {
   }
 });
 console.log(
-  "Method: K線反轉\n",
+  "Method: K線反轉(買)\n",
   "----------------------------\n",
   purchaseList1,
   "\n",
@@ -53,6 +88,7 @@ epsData.forEach((stockId) => {
   stockData = ma.getMa10(stockData);
   let length = stockData.length;
   if (
+    stockData[length - 1]["v"] > 1000 &&
     stockData[length - 1]["sumING"] > 100 &&
     stockData[length - 2]["sumING"] > 100 &&
     stockData[length - 3]["sumING"] > 100
@@ -73,4 +109,3 @@ console.log(
   "\n",
   "----------------------------\n"
 );
-
