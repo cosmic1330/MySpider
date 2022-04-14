@@ -79,6 +79,37 @@ console.log(
   "----------------------------\n"
 );
 
+
+/* stock2 */
+let purchaseList3 = [];
+epsData.forEach((stockId) => {
+  let stockData = twseData[stockId];
+  if (!stockData) return;
+
+  stockData = ma.getMa10(stockData);
+  let length = stockData.length;
+  if (
+    stockData[length - 1]["v"] > 1000 &&
+    stockData[length - 1]["sumING"] > 1000 &&
+    stockData[length - 2]["sumING"] > 100 
+  ) {
+    purchaseList3.push({
+      date: stockData[length - 1]["t"],
+      price: stockData[length - 1]["c"],
+      I: stockData[length - 1]["sumING"],
+      F: stockData[length - 1]["sumForeignNoDealer"],
+      [stockId]: stockData[length - 1]["name"],
+    });
+  }
+});
+console.log(
+  "Method: 投信買進*2\n",
+  "----------------------------\n",
+  purchaseList3,
+  "\n",
+  "----------------------------\n"
+);
+
 /* stock */
 let purchaseList = [];
 epsData.forEach((stockId) => {
@@ -109,3 +140,5 @@ console.log(
   "\n",
   "----------------------------\n"
 );
+
+
