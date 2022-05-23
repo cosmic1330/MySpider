@@ -60,7 +60,8 @@ MongoClient.connect(MONGODB_URI, function (err, client) {
         // db.createCollection(i);
 
         // insert data
-        db.collection(i)
+        setTimeout(() => {
+          db.collection(i)
           .insertMany(element)
           .then((res) =>
             console.log({
@@ -69,6 +70,7 @@ MongoClient.connect(MONGODB_URI, function (err, client) {
               id: i,
             })
           );
+        }, 1000);
       }
     }
 
