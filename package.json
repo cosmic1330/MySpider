@@ -7,6 +7,9 @@
     "example": "example"
   },
   "scripts": {
+    "task1": "python getTWSE/index.py",
+    "taska": "python getEPSData/index.py",
+    "taskb": "node getTWSE/checkDataContent.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,7 +23,7 @@
   },
   "homepage": "https://github.com/cosmic1330/MySpider#readme",
   "dependencies": {
-    "@ch20026103/anysis": "^0.0.1",
+    "@ch20026103/anysis": "^0.0.2",
     "dotenv": "^10.0.0",
     "mongodb": "^4.2.2"
   }
