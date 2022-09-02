@@ -134,7 +134,7 @@ epsData.forEach((stockId) => {
   }
 });
 console.log(
-  "Method: 投信買進\n",
+  "Method: 投信買進(正)\n",
   "----------------------------\n",
   purchaseList,
   "\n",

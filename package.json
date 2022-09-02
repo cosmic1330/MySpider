@@ -8,6 +8,9 @@
   },
   "scripts": {
     "task1": "python getTWSE/index.py",
+    "task2": "node getTWSE/filter.js",
+    "task3": "node getTWSE/saveMongodb.js",
+    "task4": "node getTWSE/run.js",
     "taska": "python getEPSData/index.py",
     "taskb": "node getTWSE/checkDataContent.js",
     "test": "echo \"Error: no test specified\" && exit 1"
