@@ -19,6 +19,7 @@ const show = (func, name, today) => {
       const data = func(twseData, stockId, today);
       if (data) purchaseList.push(data);
     } catch (error) {
+      console.log(error)
       errList.push(stockId);
       return;
     }
@@ -132,8 +133,8 @@ const macd_buy = (twseData, stockId, today = 1) => {
     Dif[length - today]["DIF"] > Macd9[length - today]["MACD9"] &&
     Dif[length - (today + 1)]["DIF"] < Macd9[length - (today + 1)]["MACD9"] &&
     Macd9[length - today]["OSC"] > Macd9[length - (today + 1)]["OSC"] &&
-    Macd9[length - today + 1]["OSC"] > Macd9[length - (today + 2)]["OSC"] &&
-    Macd9[length - today + 2]["OSC"] > Macd9[length - (today + 3)]["OSC"] &&
+    Macd9[length - (today + 1)]["OSC"] > Macd9[length - (today + 2)]["OSC"] &&
+    Macd9[length - (today + 2)]["OSC"] > Macd9[length - (today + 3)]["OSC"] &&
     (Macd9[length - (today + 1)]["OSC"] < 0 ||
       Macd9[length - (today + 2)]["OSC"] < 0) &&
     stockData[length - today]["c"] >
@@ -144,7 +145,7 @@ const macd_buy = (twseData, stockId, today = 1) => {
       ma60Data[ma60Data.length - today]["ma60"] &&
     ma5Data[ma5Data.length - today]["ma5"] >
       ma60Data[ma60Data.length - today]["ma60"] &&
-    rsiData[rsiData.length - today]["rsi6"]< 80 &&
+    rsiData[rsiData.length - today]["rsi6"]< 75 &&
     rsiData[rsiData.length - today]["rsi6"]> 50
   ) {
     return {
@@ -183,5 +184,5 @@ const ing_buy = (twseData, stockId, today = 1) => {
 
 // show(k_sell, "K線反轉(賣)");
 // show(k_buy, "K線反轉(買)",30);
-show(macd_buy, "Macd反轉(買)", 33);
+show(macd_buy, "Macd反轉(買)", 1);
 // show(ing_buy, "投信買進(買),50");
