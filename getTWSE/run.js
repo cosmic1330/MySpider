@@ -1,9 +1,10 @@
 const fs = require("fs");
-const { Ma, Williams, Macd, Rsi } = require("@ch20026103/anysis");
+const { Ma, Williams, Macd, Rsi, Kd } = require("@ch20026103/anysis");
 let ma = new Ma();
 let williams = new Williams();
 let macd = new Macd();
 let rsi = new Rsi();
+let kd = new Kd();
 
 const show = (func, name, today) => {
   let twseJsonData = fs.readFileSync("./datas/TWSE/data.json");
@@ -19,7 +20,7 @@ const show = (func, name, today) => {
       const data = func(twseData, stockId, today);
       if (data) purchaseList.push(data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       errList.push(stockId);
       return;
     }
@@ -125,18 +126,20 @@ const macd_buy = (twseData, stockId, today = 1) => {
   let ma20Data = ma.getMa20(stockData);
   let ma60Data = ma.getMa60(stockData);
   let rsiData = rsi.getAllRsi(stockData);
+  let kdData = kd.getKD(stockData);
   let length = stockData.length;
   if (
-    stockData[length - today]["v"] > 1000 &&
-    stockData[length - (today + 1)]["v"] > 1000 &&
-    Macd9[length - today]["OSC"] > 0 &&
-    Dif[length - today]["DIF"] > Macd9[length - today]["MACD9"] &&
-    Dif[length - (today + 1)]["DIF"] < Macd9[length - (today + 1)]["MACD9"] &&
+    stockData[length - today]["v"] > 1500 &&
+    stockData[length - (today + 1)]["v"] > 1500 &&
+    kdData[length - today]["k-d"] > 0 &&
+    kdData[length - today]["k"] > kdData[length - today]["d"] &&
+    (kdData[length - (today + 1)]["k"] < kdData[length - (today + 1)]["d"] ||
+      kdData[length - (today + 2)]["k"] < kdData[length - (today + 2)]["d"]) &&
+    Dif[length - today]["DIF"] > 0 &&
+    Macd9[length - today]["MACD9"] > 0 &&
     Macd9[length - today]["OSC"] > Macd9[length - (today + 1)]["OSC"] &&
-    Macd9[length - (today + 1)]["OSC"] > Macd9[length - (today + 2)]["OSC"] &&
-    Macd9[length - (today + 2)]["OSC"] > Macd9[length - (today + 3)]["OSC"] &&
-    (Macd9[length - (today + 1)]["OSC"] < 0 ||
-      Macd9[length - (today + 2)]["OSC"] < 0) &&
+    Macd9[length - today]["OSC"] > Macd9[length - (today + 2)]["OSC"] &&
+    Macd9[length - today]["OSC"] > Macd9[length - (today + 3)]["OSC"] &&
     stockData[length - today]["c"] >
       ma10Data[ma10Data.length - today]["ma10"] &&
     ma5Data[ma5Data.length - today]["ma5"] >
@@ -145,8 +148,8 @@ const macd_buy = (twseData, stockId, today = 1) => {
       ma60Data[ma60Data.length - today]["ma60"] &&
     ma5Data[ma5Data.length - today]["ma5"] >
       ma60Data[ma60Data.length - today]["ma60"] &&
-    rsiData[rsiData.length - today]["rsi6"]< 75 &&
-    rsiData[rsiData.length - today]["rsi6"]> 50
+    rsiData[rsiData.length - today]["rsi6"] < 75 &&
+    rsiData[rsiData.length - today]["rsi6"] > 30
   ) {
     return {
       date: stockData[length - today]["t"],

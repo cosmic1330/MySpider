@@ -13,6 +13,7 @@
     "task4": "node getTWSE/run.js",
     "taska": "python getEPSData/index.py",
     "taskb": "node getTWSE/checkDataContent.js",
+    "taskc": "node getTWSE/clip.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,7 +27,7 @@
   },
   "homepage": "https://github.com/cosmic1330/MySpider#readme",
   "dependencies": {
-    "@ch20026103/anysis": "^0.0.2-alpha",
+    "@ch20026103/anysis": "^0.0.2-release",
     "dotenv": "^10.0.0",
     "mongodb": "^4.2.2"
   }
