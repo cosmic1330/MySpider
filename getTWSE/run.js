@@ -73,6 +73,7 @@ const williams_buy = (twseData, stockId, today = 1) => {
   if (!stockData) return;
   stockData = rsi.getAllRsi(stockData);
   stockData = williams.getAllWillams(stockData);
+  stockData = ma.getMa10(stockData);
 
   let length = stockData.length;
   if (
@@ -85,7 +86,9 @@ const williams_buy = (twseData, stockId, today = 1) => {
       stockData[length - (today + 2)].williams18 < -80 ||
       stockData[length - (today + 3)].williams9 < -80) &&
     stockData[length - today].rsi6 > stockData[length - today].rsi12 &&
-    stockData[length - (today + 1)].rsi6 < stockData[length - (today + 1)].rsi12
+    stockData[length - (today + 1)].rsi6 < stockData[length - (today + 1)].rsi12 &&
+    stockData[length - today]["c"] >
+    stockData[length - today]["ma10"]
   ) {
     return {
       date: stockData[length - today]["t"],
