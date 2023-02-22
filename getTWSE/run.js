@@ -68,61 +68,24 @@ const rsi_sell = (twseData, stockId) => {
   return;
 };
 
-/* williams sell 不好用待調整 */
-const williams_sell = (twseData, stockId) => {
+const williams_buy = (twseData, stockId, today = 1) => {
   let stockData = twseData[stockId];
   if (!stockData) return;
+  stockData = rsi.getAllRsi(stockData);
   stockData = williams.getAllWillams(stockData);
-
-  let length = stockData.length;
-  if (
-    stockData[stockData.length - 1]["l"] >
-      stockData[stockData.length - 2]["l"] &&
-    (stockData[stockData.length - 1].williams9 > -10 ||
-      stockData[stockData.length - 2].williams9 > -10) &&
-    (stockData[stockData.length - 1].williams18 > -10 ||
-      stockData[stockData.length - 2].williams18 > -10)
-  ) {
-    return {
-      date: stockData[length - 1]["t"],
-      price: stockData[length - 1]["c"],
-      I: stockData[length - 1]["sumING"],
-      [stockId]: stockData[length - 1]["name"],
-      F: stockData[length - 1]["sumForeignNoDealer"],
-    };
-  }
-  return;
-};
-
-const k_buy = (twseData, stockId, today = 1) => {
-  let stockData = twseData[stockId];
-  if (!stockData) return;
-  let ma10Data = ma.getMa10(stockData);
-  let bollData = ma.getBoll(stockData);
-  let williamsData = williams.getAllWillams(stockData);
 
   let length = stockData.length;
   if (
     stockData[length - today]["v"] > 1000 &&
     stockData[length - (today + 1)]["v"] > 1000 &&
-    stockData[length - today]["h"] > stockData[length - (today + 1)]["h"] &&
-    stockData[length - today]["l"] > stockData[length - (today + 1)]["l"] &&
-    (williamsData[williamsData.length - (today + 1)].williams9 < -80 ||
-      williamsData[williamsData.length - (today + 2)].williams9 < -80) &&
-    (williamsData[williamsData.length - (today + 1)].williams18 < -80 ||
-      williamsData[williamsData.length - (today + 2)].williams18 < -80) &&
-    stockData[length - today]["c"] >
-      ma10Data[ma10Data.length - today]["ma10"] &&
-    ((stockData[length - today]["c"] >
-      bollData[bollData.length - today]["ma25"] &&
-      (stockData[length - (today + 1)]["c"] <
-        bollData[bollData.length - (today + 1)]["ma25"] ||
-        stockData[length - (today + 2)]["c"] <
-          bollData[bollData.length - (today + 2)]["ma25"])) ||
-      (stockData[length - today]["c"] >
-        bollData[bollData.length - today]["ma25"] &&
-        stockData[length - today]["c"] <
-          bollData[bollData.length - today]["bollUb"]))
+    (stockData[length - (today + 1)].williams9 < -80 ||
+      stockData[length - (today + 2)].williams9 < -80 ||
+      stockData[length - (today + 3)].williams9 < -80) &&
+    (stockData[length - (today + 1)].williams18 < -80 ||
+      stockData[length - (today + 2)].williams18 < -80 ||
+      stockData[length - (today + 3)].williams9 < -80) &&
+    stockData[length - today].rsi6 > stockData[length - today].rsi12 &&
+    stockData[length - (today + 1)].rsi6 < stockData[length - (today + 1)].rsi12
   ) {
     return {
       date: stockData[length - today]["t"],
@@ -209,7 +172,7 @@ const ing_buy = (twseData, stockId, today = 1) => {
 };
 
 // show(rsi_sell, "rsi減弱＋股價破低(賣)");
-// show(williams_sell, "williams減弱＋股價破低(賣)");  
-// show(k_buy, "K線反轉(買)",30);
+// show(williams_sell, "williams減弱＋股價破低(賣)");
+show(williams_buy, "williams反轉(買)", 1);
 show(macd_buy, "Macd反轉(買)", 1);
 // show(ing_buy, "投信買進(買),50");
