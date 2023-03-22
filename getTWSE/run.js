@@ -174,8 +174,8 @@ const ing_buy = (twseData, stockId, today = 1) => {
   return;
 };
 
-// show(rsi_sell, "rsi減弱＋股價破低(賣)");
+show(rsi_sell, "rsi減弱＋股價破低(賣)");
 // show(williams_sell, "williams減弱＋股價破低(賣)");
-show(williams_buy, "williams反轉(買)", 1);
-show(macd_buy, "Macd反轉(買)", 1);
+show(williams_buy, "williams反轉(買)", 2);
+show(macd_buy, "Macd反轉(買)", 2);
 // show(ing_buy, "投信買進(買),50");
