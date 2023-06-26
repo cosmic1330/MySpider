@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Ma, Williams, Macd, Rsi, Kd } = require("@ch20026103/anysis");
+const { Ma, Williams, Macd, Rsi, Kd, slope } = require("@ch20026103/anysis");
 let ma = new Ma();
 let williams = new Williams();
 let macd = new Macd();
@@ -74,8 +74,16 @@ const williams_buy = (twseData, stockId, today = 1) => {
   stockData = rsi.getAllRsi(stockData);
   stockData = williams.getAllWillams(stockData);
   stockData = ma.getMa10(stockData);
+  stockData = ma.getMa20(stockData);
+  stockData = ma.getMa60(stockData);
+  stockData = ma.getMa5(stockData);
 
   let length = stockData.length;
+
+  let slopeMa5 = slope( Array.from({ length: 15 }, (_, i) => i + 1) , stockData.map(item=>item.ma5).slice(length - today -14,length - today + 1))
+  let slopeMa20 = slope( Array.from({ length: 15 }, (_, i) => i + 1) , stockData.map(item=>item.ma20).slice(length - today -14,length - today + 1))
+  let slopeMa60 = slope( Array.from({ length: 15 }, (_, i) => i + 1) , stockData.map(item=>item.ma60).slice(length - today -14,length - today +1))
+  
   if (
     stockData[length - today]["v"] > 1000 &&
     stockData[length - (today + 1)]["v"] > 1000 &&
@@ -86,9 +94,12 @@ const williams_buy = (twseData, stockId, today = 1) => {
       stockData[length - (today + 2)].williams18 < -80 ||
       stockData[length - (today + 3)].williams9 < -80) &&
     stockData[length - today].rsi6 > stockData[length - today].rsi12 &&
-    stockData[length - (today + 1)].rsi6 < stockData[length - (today + 1)].rsi12 &&
-    stockData[length - today]["c"] >
-    stockData[length - today]["ma10"]
+    stockData[length - (today + 1)].rsi6 <
+      stockData[length - (today + 1)].rsi12 &&
+    stockData[length - today]["c"] > stockData[length - today]["ma10"] &&
+    slopeMa5 > 0 &&
+    slopeMa20 > 0 &&
+    slopeMa60 > 0
   ) {
     return {
       date: stockData[length - today]["t"],
@@ -154,14 +165,25 @@ const ing_buy = (twseData, stockId, today = 1) => {
   let stockData = twseData[stockId];
   if (!stockData) return;
 
-  stockData = ma.getMa10(stockData);
+  stockData = ma.getMa20(stockData);
+  stockData = ma.getMa60(stockData);
+  stockData = ma.getMa5(stockData);
+
   let length = stockData.length;
+
+  let slopeMa5 = slope( Array.from({ length: 15 }, (_, i) => i + 1) , stockData.map(item=>item.ma5).slice(length - today -14,length - today + 1))
+  let slopeMa20 = slope( Array.from({ length: 15 }, (_, i) => i + 1) , stockData.map(item=>item.ma20).slice(length - today -14,length - today + 1))
+  let slopeMa60 = slope( Array.from({ length: 15 }, (_, i) => i + 1) , stockData.map(item=>item.ma60).slice(length - today -14,length - today +1))
+  
   if (
     stockData[length - today]["v"] > 1000 &&
-    stockData[length - (today + 2)]["v"] > 1000 &&
+    stockData[length - (today + 1)]["v"] > 1000 &&
     stockData[length - today]["sumING"] > 100 &&
+    stockData[length - (today + 1)]["sumING"] > 100 &&
     stockData[length - (today + 2)]["sumING"] > 100 &&
-    stockData[length - (today + 3)]["sumING"] > 100
+    slopeMa5 > 0 &&
+    slopeMa20 > 0 &&
+    slopeMa60 > 0
   ) {
     return {
       date: stockData[length - today]["t"],
@@ -174,8 +196,8 @@ const ing_buy = (twseData, stockId, today = 1) => {
   return;
 };
 
-show(rsi_sell, "rsi減弱＋股價破低(賣)");
+// show(rsi_sell, "rsi減弱＋股價破低(賣)");
 // show(williams_sell, "williams減弱＋股價破低(賣)");
 show(williams_buy, "williams反轉(買)", 1);
 show(macd_buy, "Macd反轉(買)", 1);
-// show(ing_buy, "投信買進(買),50");
+show(ing_buy, "投信買進(買)", 1);

@@ -1,19 +1,19 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@ch20026103/anysis': ^0.0.2-release
+  '@ch20026103/anysis': ^0.0.3-alpha
   dotenv: ^10.0.0
   mongodb: ^4.2.2
 
 dependencies:
-  '@ch20026103/anysis': 0.0.2-release
+  '@ch20026103/anysis': 0.0.3-alpha
   dotenv: 10.0.0
   mongodb: 4.6.0
 
 packages:
 
-  /@ch20026103/anysis/0.0.2-release:
-    resolution: {integrity: sha512-DyHMzJZgfk3q91Pu0WFjXNcarH8AZ6tEY5R00rA5aHlkVe9cpSMrehIubCI/DEg53YLRfctGifKZcaalMUD2Xg==}
+  /@ch20026103/anysis/0.0.3-alpha:
+    resolution: {integrity: sha512-a8kadjb2BULMkZtRa3EPK7XcX/taFtbhWouxj5iziwO+D+vslrB+WkZtWVj+xZeC9OwC7ZR7Cn8mu5bM8JsGaA==}
     dev: false
 
   /@types/node/17.0.35:
