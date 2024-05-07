@@ -4,7 +4,7 @@
     {
       "label": "1-執行爬蟲",
       "type": "shell",
-      "command": "python getTWSE/index.py",
+      "command": "python project-stock-query-json/getTWSE/index.py",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -13,7 +13,7 @@
     {
       "label": "2-資料處理",
       "type": "shell",
-      "command": "node getTWSE/filter.js",
+      "command": "node project-stock-query-json/getTWSE/filter.js",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -22,7 +22,7 @@
     {
       "label": "3-資料轉換",
       "type": "shell",
-      "command": "node getTWSE/saveMongodb.js",
+      "command": "node project-stock-query-json/getTWSE/saveMongodb.js",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -31,7 +31,7 @@
     {
       "label": "4-資料分析",
       "type": "shell",
-      "command": "node getTWSE/run.js",
+      "command": "node project-stock-query-json/getTWSE/run.js",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -40,7 +40,7 @@
     {
       "label": "a-取得季報表",
       "type": "shell",
-      "command": "python getEPSData/index.py",
+      "command": "python project-stock-query-json/getEPSData/index.py",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -49,7 +49,7 @@
     {
       "label": "b-資料檢查",
       "type": "shell",
-      "command": "node getTWSE/checkDataContent.js",
+      "command": "node project-stock-query-json/getTWSE/checkDataContent.js",
       "group": {
         "kind": "build",
         "isDefault": true

@@ -1,6 +1,0 @@
-beautifulsoup4==4.11.1
-loguru==0.7.2
-PyExecJS==1.5.1
-pyquery==2.0.0
-Requests==2.31.0
-selenium==4.20.0
