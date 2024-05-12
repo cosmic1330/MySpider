@@ -5,7 +5,14 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # 創建基礎模型
 Base = declarative_base()
+class Taiex(Base):
+    __tablename__ = 'taiex'
 
+    transaction_date = Column(Date, primary_key=True)
+    open_price = Column(Numeric(10, 2), nullable=False)
+    close_price = Column(Numeric(10, 2), nullable=False)
+    high_price = Column(Numeric(10, 2), nullable=False)
+    low_price = Column(Numeric(10, 2), nullable=False)
 
 class DealDate(Base):
     __tablename__ = 'deal_date'

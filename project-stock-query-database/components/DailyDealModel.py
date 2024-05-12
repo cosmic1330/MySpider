@@ -40,7 +40,7 @@ class DailyDealModel:
                         session.add_all(new_data)
                         session.commit()
                         loguru.logger.info(
-                            f"daily_deal stock {stock_id} {stock_name} query success")
+                            f"daily_deal stock {stock_id} {stock_name} 『{last_date}』－『{dealdate_last_date}』query success")
                     except Exception as e:
                         session.rollback()
                         loguru.logger.error(

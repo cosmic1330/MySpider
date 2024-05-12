@@ -9,6 +9,7 @@ from components.MonthlyRevenueModel import MonthlyRevenueModel
 from components.DealDateModel import DealDateModel
 from components.DailyDealModel import DailyDealModel
 from components.LegalPersonModel import LegalPersonModel
+from components.TaiexModel import TaiexModel
 from middleware.orm.database import session
 from middleware.orm.models import Stock
 
@@ -51,14 +52,21 @@ if __name__ == '__main__':
     monthlyRevenue = MonthlyRevenueModel()
     if(monthlyRevenue.check_monthly_revenue_count() == 0):
         monthlyRevenue.initial_monthly_revenue()
+        
+    # Taiex model
+    taiex = TaiexModel()
+    if(taiex.check_taiex_count() == 0):
+        taiex.initial_taiex()    
     
     current_time = datetime.datetime.now()
-    if current_time.hour == 18:
+    print(current_time.hour)
+    if current_time.hour not in range(9, 18):
         dealDate.query_lose_data()
         dailyDeal.query_lose_data()
         legalPerson.query_lose_data()
         eps.query_lose_data()
         monthlyRevenue.query_lose_data()
+        taiex.query_lose_data()
 
     
     session.close()
