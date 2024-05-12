@@ -56,7 +56,7 @@ class TaiexModel:
                             print(e)
                             raise
                 delay()
-        loguru.logger.info(f"Create deal date is done.")
+        loguru.logger.info(f"Create Taiex is done.")
 
     def check_database_date(self):
         return session.query(Taiex.transaction_date).order_by(Taiex.transaction_date.desc()).first()
@@ -90,7 +90,7 @@ class TaiexModel:
                 year += 1
                 month = 1
             delay()
-        loguru.logger.info(f"Initial deal date is done.")
+        loguru.logger.info(f"Initial Taiex is done.")
 
     @classmethod
     def queryData(self, year, month):
