@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 def isdecimal(string):
     try:
         Decimal(string)

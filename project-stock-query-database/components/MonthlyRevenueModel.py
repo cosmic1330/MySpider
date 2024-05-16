@@ -51,14 +51,15 @@ class MonthlyRevenueModel:
         for year, month in missing_combinations:
             print(f"取得{year}年{month}月資料")
             new_data = self.queryData(year, month)
-            try:
-                session.add_all(new_data)
-                session.commit()
-            except Exception as e:
-                session.rollback()
-                loguru.logger.error(f'Fail create {year}/{month} data')
-                print(e)
-                raise
+            for data in new_data:
+                try:
+                    session.add(data)
+                    session.commit()
+                except Exception as e:
+                    session.rollback()
+                    loguru.logger.error(f'Fail create {data.stock_id} {year}/{month} monthly revenue data', e)
+
+            loguru.logger.success(f'Success create {year}/{month} monthly revenue data')
             delay()
         loguru.logger.info(f"Query monthly_revenue is done.")
         
@@ -76,16 +77,16 @@ class MonthlyRevenueModel:
         while year < current_year or month < current_month:
             print(f"取得{year}年{month}月資料")
             new_data = self.queryData(year-1911, month)
+            
+            for data in new_data:
+                try:
+                    session.add(data)
+                    session.commit()
+                except Exception as e:
+                    session.rollback()
+                    loguru.logger.error(f'Fail create {data.stock_id} {year}/{month} monthly revenue data', e)
 
-            try:
-                session.add_all(new_data)
-                session.commit()
-            except Exception as e:
-                session.rollback()
-                loguru.logger.error(f'Fail create {year}/{month} data')
-                print(e)
-                raise
-
+            loguru.logger.success(f'Success create {year}/{month} monthly revenue data')
             month += 1
             if month > 12:
                 year += 1
