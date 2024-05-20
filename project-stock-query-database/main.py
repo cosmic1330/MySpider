@@ -12,6 +12,7 @@ from components.LegalPersonModel import LegalPersonModel
 from components.TaiexModel import TaiexModel
 from middleware.orm.database import session
 from middleware.orm.models import Stock
+from components.LeaderModel import LeaderModel
 
 if __name__ == '__main__':
     logger.add(
@@ -58,8 +59,12 @@ if __name__ == '__main__':
     if(taiex.check_taiex_count() == 0):
         taiex.initial_taiex()    
     
+    # # Leader model
+    # leader = LeaderModel()
+    # if(leader.check_leader_count() == 0):
+    #     leader.initial_leader()
+     
     current_time = datetime.datetime.now()
-    print(current_time.hour)
     if current_time.hour not in range(9, 18):
         dealDate.query_lose_data()
         dailyDeal.query_lose_data()

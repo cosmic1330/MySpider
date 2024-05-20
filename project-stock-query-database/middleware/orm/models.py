@@ -5,6 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # 創建基礎模型
 Base = declarative_base()
+# 定義數據庫模型
+
+
 class Taiex(Base):
     __tablename__ = 'taiex'
 
@@ -14,13 +17,15 @@ class Taiex(Base):
     high_price = Column(Numeric(10, 2), nullable=False)
     low_price = Column(Numeric(10, 2), nullable=False)
 
+
 class DealDate(Base):
     __tablename__ = 'deal_date'
 
     transaction_date = Column(Date, primary_key=True)
-    
+
     daily_deal = relationship("DailyDeal", back_populates='deal_date')
     legal_persons = relationship('LegalPerson', back_populates='deal_date')
+    leader = relationship('Leader', back_populates='deal_date')
 
 
 class Stock(Base):
@@ -34,6 +39,8 @@ class Stock(Base):
     eps = relationship('Eps', back_populates='stock')
     legal_persons = relationship('LegalPerson', back_populates='stock')
     monthly_revenue = relationship('MonthlyRevenue', back_populates='stock')
+    leader = relationship('Leader', back_populates='stock')
+
 
 class DailyDeal(Base):
     __tablename__ = 'daily_deal'
@@ -72,13 +79,13 @@ class MonthlyRevenue(Base):
     month = Column(Integer, primary_key=True)
     stock_id = Column(String(10), ForeignKey(
         'stock.stock_id'), primary_key=True)
-    current_month_revenue = Column(BigInteger)
-    previous_month_revenue = Column(BigInteger)
-    previous_year_same_month_revenue = Column(BigInteger)
+    current_month_revenue = Column(Integer, nullable=False)
+    previous_month_revenue = Column(Integer, nullable=False)
+    previous_year_same_month_revenue = Column(Integer, nullable=False)
     month_over_month_revenue = Column(Numeric(precision=15, scale=3))
     year_over_year_revenue = Column(Numeric(precision=15, scale=3))
-    current_year_cumulative_revenue = Column(BigInteger)
-    previous_year_cumulative_revenue = Column(BigInteger)
+    current_year_cumulative_revenue = Column(Integer, nullable=False)
+    previous_year_cumulative_revenue = Column(Integer, nullable=False)
     compare_cumulative_revenue = Column(Numeric(precision=15, scale=3))
 
     stock = relationship('Stock', back_populates='monthly_revenue')
@@ -92,15 +99,27 @@ class LegalPerson(Base):
     stock_id = Column(String(10), ForeignKey(
         'stock.stock_id'), primary_key=True)
     stock_name = Column(String(30), nullable=False)
-    foreign_investors = Column(Integer, nullable=False)
-    investment_trust = Column(Integer, nullable=False)
-    dealer = Column(Integer, nullable=False)
+    foreign_investors = Column(Integer, nullable=False)  # 外資
+    investment_trust = Column(Integer, nullable=False)  # 投信
+    dealer = Column(Integer, nullable=False)  # 自營商
 
     stock = relationship('Stock', back_populates='legal_persons')
     deal_date = relationship("DealDate", back_populates='legal_persons')
 
 
-# 定義數據庫模型
+class Leader(Base):
+    __tablename__ = 'leader'
+    transaction_date = Column(Date, ForeignKey(
+        'deal_date.transaction_date'), primary_key=True)
+    stock_id = Column(String(10), ForeignKey(
+        'stock.stock_id'), primary_key=True)
+    leader_difference = Column(Integer, nullable=False)  # 主力買賣超
+    buyers_sellers_number_difference = Column(Integer, nullable=False)  # 買賣家數差
+    five_day_concentration = Column(Numeric(10, 2), nullable=False)  # 五日集中度
+    ten_day_concentration = Column(Numeric(10, 2), nullable=False)  # 十日集中度
+
+    stock = relationship('Stock', back_populates='leader')
+    deal_date = relationship("DealDate", back_populates='leader')
 
 
 class User(Base):
