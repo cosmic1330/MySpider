@@ -25,9 +25,9 @@ if __name__ == '__main__':
     # requestByProxy()
     
     # Stocks model
-    # ** initial_current_stockIds() 會將目前所有股票代號刷新存入資料庫 **
+    # ** refresh_current_stockIds() 會將目前所有股票代號刷新存入資料庫 **
     # stocks = StocksModel()
-    # stocks.initial_current_stockIds()
+    # stocks.refresh_current_stockIds()
     
     # # DealDate model
     dealDate = DealDateModel()
