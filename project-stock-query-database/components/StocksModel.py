@@ -17,7 +17,7 @@ class StocksModel:
         # get database stock ids
         try:
             ids = session.query(Stock).all()
-            session.query(Stock).update({Stock.enabled: False})
+            session.query(Stock).update({Stock.enabled: False, Stock.listed: False})
             session.commit()
         except Exception as e:
             session.rollback()
@@ -32,7 +32,8 @@ class StocksModel:
             new_stock = Stock(
                 stock_id=data['stock_id'],
                 stock_name=data['stock_name'],
-                enabled=data['enabled']
+                enabled=data['enabled'],
+                listed=data['listed'],
             )
             try:
                 session.add(new_stock)
@@ -41,11 +42,12 @@ class StocksModel:
                 session.rollback()
                 try:
                     session.query(Stock).filter(
-                        Stock.stock_id == data['stock_id']).update({Stock.enabled: True})
+                        Stock.stock_id == data['stock_id']).update({Stock.enabled: True, Stock.listed: data['listed']})
                     session.commit()
                 except Exception as e:
                     session.rollback()
-                    loguru.logger.error(f'Fail create stock id {data["stock_id"]} {data["stock_name"]}')
+                    loguru.logger.error(
+                        f'Fail create stock id {data["stock_id"]} {data["stock_name"]}')
                     print(e)
 
         loguru.logger.info(f"stocks id update is done.")
@@ -61,6 +63,7 @@ class StocksModel:
                 'stock_id': item[0],
                 'stock_name': item[1],
                 'enabled': True,
+                'listed': True,
             } for item in data]
 
             return result
@@ -95,7 +98,8 @@ class StocksModel:
                 temp = {
                     'stock_id': tds[0].text,
                     'stock_name': tds[1].text,
-                    'enabled': True
+                    'enabled': True,
+                    'listed': False,
                 }
                 result.append(temp)
 

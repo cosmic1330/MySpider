@@ -21,15 +21,11 @@ if __name__ == '__main__':
         retention='7 days',
         level='DEBUG'
     )
-    # 使用proxy
-    # requestByProxy()
     
     # Stocks model
-    # ** refresh_current_stockIds() 會將目前所有股票代號刷新存入資料庫 **
-    # stocks = StocksModel()
-    # stocks.refresh_current_stockIds()
+    stocks = StocksModel()
     
-    # # DealDate model
+    # DealDate model
     dealDate = DealDateModel()
     if(dealDate.check_deal_date_count() == 0):
         dealDate.initial_deal_date()
@@ -69,9 +65,29 @@ if __name__ == '__main__':
         dealDate.query_lose_data()
         dailyDeal.query_lose_data()
         legalPerson.query_lose_data()
-        eps.query_lose_data()
-        monthlyRevenue.query_lose_data()
+        # eps.query_lose_data()
+        # monthlyRevenue.query_lose_data()
         taiex.query_lose_data()
-
+        
+    
+    # 工具函式
+    """
+    修正每日交易資料
+    repair_daily_deal() 會以Yahoo API資料修正缺少的每日交易資料
+    """
+    # dailyDeal.repair_daily_deal()
+    
+    
+    """
+    刷新股票代號
+    refresh_current_stockIds() 會將目前所有股票代號刷新存入資料庫
+    """
+    # stocks.refresh_current_stockIds()
+    
+    
+    """
+    取得proxy ip列表
+    """
+    # requestByProxy()
     
     session.close()

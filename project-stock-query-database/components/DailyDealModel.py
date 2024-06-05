@@ -13,10 +13,31 @@ class DailyDealModel:
     def __init__(self):
         pass
 
+    def repair_daily_deal(self):
+        stocks = session.query(Stock.stock_id, Stock.stock_name).filter(
+            Stock.enabled == True).all()
+        for (stock_id, stock_name) in stocks:
+            new_data = self.queryYahooData(stock_id, stock_name)
+            if (new_data):
+                loguru.logger.info(f"daily_deal stock {stock_id} {stock_name} fixing...")
+                for data in new_data:
+                    try:
+                        session.add(data)
+                        session.commit()
+                        print(
+                            f"stock {stock_id} {stock_name} 『{data.transaction_date}』 create success")
+                    except Exception as e:
+                        session.rollback()
+            else:
+                loguru.logger.error(
+                    f"daily_deal stock {stock_id} {stock_name} fixed fail")
+        loguru.logger.info(
+                            f"daily_deal stock fixed done.")
+
     def query_lose_data(self):
         dealdate_last_date = session.query(DealDate.transaction_date).order_by(
             DealDate.transaction_date.desc()).first()
-        dealdate_last_date=int(dealdate_last_date[0].strftime("%Y%m%d"))
+        dealdate_last_date = int(dealdate_last_date[0].strftime("%Y%m%d"))
         stocks = session.query(Stock.stock_id, Stock.stock_name).filter(
             Stock.enabled == True).all()
         for (stock_id, stock_name) in stocks:
@@ -31,22 +52,24 @@ class DailyDealModel:
 
             transaction_count = session.query(DailyDeal).filter(
                 DailyDeal.stock_id == stock_id).count()
-            if(last_date is not None):
+            if (last_date is not None):
                 last_date = int(last_date[0].strftime("%Y%m%d"))
-                if(last_date != dealdate_last_date):
+                if (last_date != dealdate_last_date):
                     new_data = self.queryYahooData(
                         stock_id, stock_name, last_date, dealdate_last_date)
-                    try:
-                        session.add_all(new_data)
-                        session.commit()
+                    if (new_data):
+                        for data in new_data:
+                            try:
+                                session.add(data)
+                                session.commit()
+                            except Exception as e:
+                                session.rollback()
                         loguru.logger.info(
                             f"daily_deal stock {stock_id} {stock_name} 『{last_date}』－『{dealdate_last_date}』query success")
-                    except Exception as e:
-                        session.rollback()
+                    else:
                         loguru.logger.error(
-                            f"daily_deal stock {stock_id} {stock_name} query fail")
-                        loguru.logger.error(e)
-                    
+                            f"daily_deal stock {stock_id} {stock_name} 『{last_date}』－『{dealdate_last_date}』query fail")
+
             elif last_date is None:
                 new_data = self.queryYahooData(stock_id, stock_name)
                 try:
@@ -118,5 +141,5 @@ class DailyDealModel:
             print(e)
 
     def queryTwseData(self, date, stock_id):
-        url=f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=csv&date={date}&stockNo={stock_id}"
+        url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=csv&date={date}&stockNo={stock_id}"
         pass

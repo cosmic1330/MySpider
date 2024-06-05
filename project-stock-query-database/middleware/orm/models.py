@@ -34,6 +34,7 @@ class Stock(Base):
     stock_id = Column(String(10), primary_key=True)
     stock_name = Column(String(30), nullable=False, unique=True)
     enabled = Column(Boolean, default=True)
+    listed = Column(Boolean, nullable=False)
 
     daily_deal = relationship('DailyDeal', back_populates='stock')
     eps = relationship('Eps', back_populates='stock')
