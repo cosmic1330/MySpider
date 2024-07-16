@@ -61,15 +61,16 @@ if __name__ == '__main__':
     #     leader.initial_leader()
      
     current_time = datetime.datetime.now()
-    if current_time.hour not in range(9, 18):
+    if datetime.datetime.today().weekday() in range(0, 4) and current_time.hour in range(9, 18):
+        print('在交易時間內，不執行補資料動作')
+    else:
         dealDate.query_lose_data()
         dailyDeal.query_lose_data()
         legalPerson.query_lose_data()
         # eps.query_lose_data()
-        # monthlyRevenue.query_lose_data()
+        monthlyRevenue.query_lose_data()
         taiex.query_lose_data()
         
-    
     # 工具函式
     """
     修正每日交易資料

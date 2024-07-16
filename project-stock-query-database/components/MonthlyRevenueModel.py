@@ -34,11 +34,11 @@ class MonthlyRevenueModel:
 
             # 寫入資料庫
             session.commit()
-            loguru.logger.success('Success delete last month data')
+            loguru.logger.success('Success delete last month Monthly Revenue data')
         except Exception as e:
             # 發生例外錯誤，還原交易
             session.rollback()
-            loguru.logger.error('Fail delete last month data')
+            loguru.logger.error('Fail delete last month Monthly Revenue data')
             
         # 所有可能的年月組合
         before_combinations = [(year, month) for year in range(current_year-1-1911, year-1911, -1) for month in range(1, 13)]

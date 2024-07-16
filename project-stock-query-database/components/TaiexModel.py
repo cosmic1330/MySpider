@@ -20,19 +20,6 @@ class TaiexModel:
         db_month = db_date[0].month
         print("資料庫Taiex最大年月日:", db_date)
 
-        # 刪除本月資料
-        try:
-            session.query(Taiex).filter(
-                Taiex.year == current_year, Taiex.month == current_month).delete()
-
-            # 寫入資料庫
-            session.commit()
-            loguru.logger.success('Success delete last month data')
-        except Exception as e:
-            # 發生例外錯誤，還原交易
-            session.rollback()
-            loguru.logger.error('Fail delete last month data')
-
         for year in range(db_year, current_year+1):
             for month in range(1, 13):
 
