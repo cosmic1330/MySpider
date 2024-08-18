@@ -25,42 +25,47 @@ class EpsModle:
                 # 取得資料庫最大季
                 max_season = session.query(Eps).filter(
                     Eps.stock_id == stock_id).order_by(Eps.season.desc()).first()
-                db_year = int(max_season.season[:4]) if max_season is not None else 0 # 取前四個字符，即年份
-                db_quarter = max_season.season[4:] if max_season is not None else 'Q1'  # 從第五個字符開始，即季度
-                loguru.logger.info(f"query {stock_id} max season {db_year}{db_quarter} eps data.")
+                # 取前四個字符，即年份
+                db_year = int(
+                    max_season.season[:4]) if max_season is not None else 0
+                # 從第五個字符開始，即季度
+                db_quarter = max_season.season[4:
+                                               ] if max_season is not None else 'Q1'
+                loguru.logger.info(f"query {stock_id} eps data")
                 # 取得最新資料
-                r = requests.get(f'https://tw.stock.yahoo.com/quote/{stock_id}.TW/eps')
-                soup = BeautifulSoup(r.text, "html.parser")  # 將網頁資料以html.parser
+                r = requests.get(
+                    f'https://tw.stock.yahoo.com/quote/{stock_id}.TW/eps')
+                # 將網頁資料以html.parser
+                soup = BeautifulSoup(r.text, "html.parser")
                 ul = soup.find('ul', class_="List(n)")
 
-                new_eps = []
                 for li in ul:
                     divs = li.find('div').find_all('div')
                     season = divs[0].text.replace(" ", "")
                     current_year = int(divs[0].text[:4].strip())
                     current_quarter = divs[0].text[4:].strip()
                     if (self.quarter_to_float(current_year, current_quarter) > self.quarter_to_float(db_year, db_quarter)):
-                        new_eps.append(Eps(
-                            season=season,
-                            stock_id=stock_id,
-                            stock_name=stock_name,
-                            eps_data=Decimal(divs[2].text.strip()),
-                        ))
+                        try:
+                            session.add(Eps(
+                                season=season,
+                                stock_id=stock_id,
+                                stock_name=stock_name,
+                                eps_data=Decimal(divs[2].text.strip()),
+                            ))
+                            session.commit()
+                            loguru.logger.success(
+                                f"Success create {stock_id} season {season} eps.")
+                        except IntegrityError as e:
+                            session.rollback()  # 回滾交易以清除未提交的更改
+                            loguru.logger.warning(
+                                f"Skipping duplicate entry for stockid {stock_id}")
+                            break
                     else:
-                        continue
-                try:
-                    session.add_all(new_eps)
-                    session.commit()
-                except IntegrityError as e:
-                    session.rollback()  # 回滾交易以清除未提交的更改
-                    loguru.logger.warning(
-                        f"Skipping duplicate entry for stockid {stock_id}")
-                    print(e)
-                    raise
-                loguru.logger.success(f"{stock_id} create season eps is done.")
+                        break
+
             except Exception as e:
                 loguru.logger.error(
-                    f"Fail create season eps for stockid {stock_id}")
+                    f"Fail query stock {stock_id}")
                 print(e)
 
     def check_eps_count(self):
@@ -72,7 +77,6 @@ class EpsModle:
             # save eps
             datas = self.getSeasonEps(season)
             for data in datas:
-                print(data)
                 new_eps = Eps(
                     season=data['season'],
                     stock_id=data['stock_id'],
