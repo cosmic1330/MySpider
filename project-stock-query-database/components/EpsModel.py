@@ -22,15 +22,6 @@ class EpsModle:
             Stock.enabled == True).all()
         for (stock_id, stock_name) in stocks:
             try:
-                # 取得資料庫最大季
-                max_season = session.query(Eps).filter(
-                    Eps.stock_id == stock_id).order_by(Eps.season.desc()).first()
-                # 取前四個字符，即年份
-                db_year = int(
-                    max_season.season[:4]) if max_season is not None else 0
-                # 從第五個字符開始，即季度
-                db_quarter = max_season.season[4:
-                                               ] if max_season is not None else 'Q1'
                 loguru.logger.info(f"query {stock_id} eps data")
                 # 取得最新資料
                 r = requests.get(
@@ -44,23 +35,20 @@ class EpsModle:
                     season = divs[0].text.replace(" ", "")
                     current_year = int(divs[0].text[:4].strip())
                     current_quarter = divs[0].text[4:].strip()
-                    if (self.quarter_to_float(current_year, current_quarter) > self.quarter_to_float(db_year, db_quarter)):
-                        try:
-                            session.add(Eps(
-                                season=season,
-                                stock_id=stock_id,
-                                stock_name=stock_name,
-                                eps_data=Decimal(divs[2].text.strip()),
-                            ))
-                            session.commit()
-                            loguru.logger.success(
-                                f"Success create {stock_id} season {season} eps.")
-                        except IntegrityError as e:
-                            session.rollback()  # 回滾交易以清除未提交的更改
-                            loguru.logger.warning(
-                                f"Skipping duplicate entry for stockid {stock_id}")
-                            break
-                    else:
+                    try:
+                        session.add(Eps(
+                            season=season,
+                            stock_id=stock_id,
+                            stock_name=stock_name,
+                            eps_data=Decimal(divs[2].text.strip()),
+                        ))
+                        session.commit()
+                        loguru.logger.success(
+                            f"Success create {stock_id} season {season} eps.")
+                    except IntegrityError as e:
+                        session.rollback()  # 回滾交易以清除未提交的更改
+                        loguru.logger.warning(
+                            f"Skipping duplicate entry for stockid {stock_id}")
                         break
 
             except Exception as e:
