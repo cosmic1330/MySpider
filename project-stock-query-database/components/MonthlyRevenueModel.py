@@ -54,11 +54,11 @@ class MonthlyRevenueModel:
                             ))
                             session.commit()
                             loguru.logger.success(
-                                f'Success create {stock_id} {year}/{month} monthly revenue data')
+                                f'[Success] create {stock_id} {year}/{month} monthly revenue data')
                     except Exception as e:
                         session.rollback()  # 回滾交易以清除未提交的更改
                         loguru.logger.warning(
-                            f"Skipping duplicate entry for stockid {stock_id}")
+                            f"[Skip] stockid:{stock_id} monthly_data:{year}/{month}")
                         break
                     year, month = li.find('div').find('div').text.split('/')
                     temp = {
@@ -81,7 +81,7 @@ class MonthlyRevenueModel:
                     }
             except Exception as e:
                 loguru.logger.error(
-                    f'Fail create {stock_id} {year}/{month} monthly revenue data', e)
+                    f'[Fail] create {stock_id} monthly revenue data', e)
                 print(e)
 
     def query_lose_data_twse(self):

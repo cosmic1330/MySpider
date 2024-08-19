@@ -25,7 +25,7 @@ class DailyDealModel:
                         session.add(data)
                         session.commit()
                         print(
-                            f"stock {stock_id} {stock_name} 『{data.transaction_date}』 create success")
+                            f"[Success] create stock:{stock_id}({stock_name}) 『{data.transaction_date}』")
                     except Exception as e:
                         session.rollback()
             else:

@@ -44,16 +44,17 @@ class EpsModle:
                         ))
                         session.commit()
                         loguru.logger.success(
-                            f"Success create {stock_id} season {season} eps.")
+                            f"[Success] create {stock_id} season eps.")
                     except IntegrityError as e:
                         session.rollback()  # 回滾交易以清除未提交的更改
                         loguru.logger.warning(
-                            f"Skipping duplicate entry for stockid {stock_id}")
+                            f"[Skip] stockid:{stock_id} season:{season}")
+                        print(e)
                         break
 
             except Exception as e:
                 loguru.logger.error(
-                    f"Fail query stock {stock_id}")
+                    f"[Fail] query stock {stock_id}")
                 print(e)
 
     def check_eps_count(self):
