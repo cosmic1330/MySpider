@@ -67,8 +67,8 @@ if __name__ == '__main__':
         dealDate.query_lose_data()
         dailyDeal.query_lose_data()
         legalPerson.query_lose_data()
-        eps.query_lose_data()
-        monthlyRevenue.query_lose_data()
+        # eps.query_lose_data()
+        # monthlyRevenue.query_lose_data()
         taiex.query_lose_data()
         
     # 工具函式

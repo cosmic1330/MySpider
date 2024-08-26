@@ -37,7 +37,6 @@ class DealDateModel:
                         except Exception as e:
                             session.rollback()
                             loguru.logger.error(f'[Fail] create {new_data[i]} data')
-                            print(e)
                             raise
                 delay()
         loguru.logger.info(f"Create deal date is done.")

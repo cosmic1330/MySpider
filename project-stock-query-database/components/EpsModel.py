@@ -49,7 +49,6 @@ class EpsModle:
                         session.rollback()  # 回滾交易以清除未提交的更改
                         loguru.logger.warning(
                             f"[Skip] stockid:{stock_id} season:{season}")
-                        print(e)
                         break
 
             except Exception as e:

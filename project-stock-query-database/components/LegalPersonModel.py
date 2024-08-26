@@ -39,7 +39,6 @@ class LegalPersonModel:
                 except Exception as e:
                     session.rollback()
                     loguru.logger.warning(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。")
-                    print(e)
             loguru.logger.success(f"{date[0]} legal person data create success")
             delay()
         loguru.logger.success("query legal person data success")

@@ -81,7 +81,6 @@ class DailyDealModel:
                     session.rollback()
                     loguru.logger.error(
                         f"daily_deal stock {stock_id} {stock_name} initial fail")
-                    loguru.logger.error(e)
         loguru.logger.info("get loss daily deal data done.")
 
     # query loss date from twse
