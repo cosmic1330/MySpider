@@ -30,7 +30,7 @@ class LegalPersonModel:
                         transaction_date=date[0],
                         stock_id=item[0],
                         stock_name=item[1].strip(),
-                        foreign_investors=int(item[7].replace(',', '')) if item[7].replace(',', '').isdigit() else 0,
+                        foreign_investors=int(item[4].replace(',', '')) if item[4].replace(',', '').isdigit() else 0,
                         investment_trust=int(item[10].replace(',', '')) if item[10].replace(',', '').isdigit() else 0,
                         dealer=int(item[11].replace(',', '')) if item[11].replace(',', '').isdigit() else 0,
                     )
