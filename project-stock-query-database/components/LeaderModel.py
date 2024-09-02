@@ -48,5 +48,4 @@ class LeaderModel:
             tbody = table.find('tbody')
             return tbody
         except Exception as e:
-            print(f'fail request {stock_id} yahoo data')
-            print(e)
+            print(f'fail request {stock_id} yahoo data', e)

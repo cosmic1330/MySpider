@@ -36,10 +36,10 @@ class LegalPersonModel:
                     )
                     session.add(new_data)
                     session.commit()
+                    print(f"[Success] create {item[0]} - {date[0]} data")
                 except Exception as e:
                     session.rollback()
-                    loguru.logger.warning(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。")
-            loguru.logger.success(f"{date[0]} legal person data create success")
+                    loguru.logger.error(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。", e)
             delay()
         loguru.logger.success("query legal person data success")
 
@@ -66,9 +66,7 @@ class LegalPersonModel:
                     session.commit()
                 except Exception as e:
                     session.rollback()  # 回滾事務
-                    loguru.logger.warning(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。")
-                    print(e)
-            loguru.logger.success(f"{date[0]} legal person data create success")
+                    loguru.loggering(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。", e)
             delay()
         loguru.logger.success("initial legal person data success")
 
@@ -82,5 +80,4 @@ class LegalPersonModel:
             else:
                 return response.json()['data']
         except Exception as e:
-            print(f'fail request {date} legal person data')
-            print(e)
+            print(f'fail request {date} legal person data', e)

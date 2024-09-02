@@ -19,7 +19,7 @@ if __name__ == '__main__':
         f'{globals.EntryPoint}/logs/{datetime.date.today():%Y%m%d}.log',
         rotation='1 day',
         retention='7 days',
-        level='DEBUG'
+        level='ERROR'
     )
     
     # Stocks model
@@ -64,12 +64,12 @@ if __name__ == '__main__':
     if datetime.datetime.today().weekday() in range(0, 4) and current_time.hour in range(9, 18):
         print('在交易時間內，不執行補資料動作')
     else:
-        dealDate.query_lose_data()
+        # dealDate.query_lose_data()
         dailyDeal.query_lose_data()
-        legalPerson.query_lose_data()
+        # legalPerson.query_lose_data()
         # eps.query_lose_data()
         # monthlyRevenue.query_lose_data()
-        taiex.query_lose_data()
+        # taiex.query_lose_data()
         
     # 工具函式
     """

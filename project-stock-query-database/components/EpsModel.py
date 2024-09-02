@@ -33,8 +33,6 @@ class EpsModle:
                 for li in ul:
                     divs = li.find('div').find_all('div')
                     season = divs[0].text.replace(" ", "")
-                    current_year = int(divs[0].text[:4].strip())
-                    current_quarter = divs[0].text[4:].strip()
                     try:
                         session.add(Eps(
                             season=season,
@@ -43,18 +41,17 @@ class EpsModle:
                             eps_data=Decimal(divs[2].text.strip()),
                         ))
                         session.commit()
-                        loguru.logger.success(
+                        print(
                             f"[Success] create {stock_id} season eps.")
                     except IntegrityError as e:
                         session.rollback()  # 回滾交易以清除未提交的更改
-                        loguru.logger.warning(
-                            f"[Skip] stockid:{stock_id} season:{season}")
+                        loguru.logger.error(
+                            f"[Skip] stockid:{stock_id} season:{season}", e)
                         break
 
             except Exception as e:
                 loguru.logger.error(
-                    f"[Fail] query stock {stock_id}")
-                print(e)
+                    f"[Fail] query stock {stock_id}", e)
 
     def check_eps_count(self):
         return session.query(Eps).count()
@@ -76,10 +73,9 @@ class EpsModle:
                     session.commit()
                 except IntegrityError as e:
                     session.rollback()  # 回滾交易以清除未提交的更改
-                    loguru.logger.warning(
-                        f"Skipping duplicate entry for season {season} stockid {data['stock_id']}")
-                    print(e)
-            loguru.logger.info(f"{season} season eps is done.")
+                    loguru.logger.error(
+                        f"Skipping duplicate entry for season {season} stockid {data['stock_id']}", e)
+            print(f"{season} season eps is done.")
 
     @staticmethod
     def quarter_to_float(year, quarter):

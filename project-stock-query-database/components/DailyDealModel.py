@@ -12,6 +12,19 @@ from decimal import Decimal
 class DailyDealModel:
     def __init__(self):
         pass
+    
+    def test(self):
+        stock_id = 2941
+        url = f"https://tw.quote.finance.yahoo.net/quote/q?type=ta&perd=d&mkt=10&sym={stock_id}&v=1&callback="
+        try:
+            response = requests.get(url)
+            index = response.text.find('"ta":')
+            json_string = "{"+response.text[index:].replace(");", "")
+            print(json_string)
+            data = json.loads(json_string)['ta']
+            print(data)
+        except Exception as e:
+            print(f'fail request {stock_id} yahoo data', e)
 
     def repair_daily_deal(self):
         stocks = session.query(Stock.stock_id, Stock.stock_name).filter(
@@ -64,23 +77,16 @@ class DailyDealModel:
                                 session.commit()
                             except Exception as e:
                                 session.rollback()
-                        loguru.logger.info(
-                            f"daily_deal stock {stock_id} {stock_name} 『{last_date}』－『{dealdate_last_date}』query success")
-                    else:
-                        loguru.logger.error(
-                            f"daily_deal stock {stock_id} {stock_name} 『{last_date}』－『{dealdate_last_date}』query fail")
-
+                                loguru.logger.error(e)
             elif last_date is None:
                 new_data = self.queryYahooData(stock_id, stock_name)
                 try:
                     session.add_all(new_data)
                     session.commit()
-                    loguru.logger.info(
-                        f"daily_deal stock {stock_id} {stock_name} initial success")
                 except Exception as e:
                     session.rollback()
                     loguru.logger.error(
-                        f"daily_deal stock {stock_id} {stock_name} initial fail")
+                        f"daily_deal stock {stock_id} {stock_name} initial fail", e)
         loguru.logger.info("get loss daily deal data done.")
 
     # query loss date from twse
@@ -96,13 +102,10 @@ class DailyDealModel:
             try:
                 session.add_all(new_data)
                 session.commit()
-                loguru.logger.info(
-                    f"stock {stock_id} {stock_name} initial success")
             except Exception as e:
                 session.rollback()
                 loguru.logger.error(
-                    f"stock {stock_id} {stock_name} initial fail")
-                loguru.logger.error(e)
+                    f"stock {stock_id} {stock_name} initial fail", e)
         loguru.logger.info("initial daily deal data success")
 
     @classmethod
@@ -110,7 +113,8 @@ class DailyDealModel:
         url = f"https://tw.quote.finance.yahoo.net/quote/q?type=ta&perd=d&mkt=10&sym={stock_id}&v=1&callback="
         try:
             response = requests.get(url)
-            json_string = response.text.replace("(", "").replace(");", "")
+            index = response.text.find('"ta":')
+            json_string = "{"+response.text[index:].replace(");", "")
             data = json.loads(json_string)['ta']
             if (start_date is None and end_date is None):
                 result = [
@@ -136,8 +140,7 @@ class DailyDealModel:
                     for item in data if start_date < item['t'] <= end_date]
             return result
         except Exception as e:
-            print(f'fail request {stock_id} yahoo data')
-            print(e)
+            print(f'fail request {stock_id} yahoo data', e)
 
     def queryTwseData(self, date, stock_id):
         url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=csv&date={date}&stockNo={stock_id}"

@@ -39,8 +39,7 @@ class TaiexModel:
                         except Exception as e:
                             session.rollback()
                             loguru.logger.error(
-                                f'Fail create {new_data[i]} data')
-                            print(e)
+                                f'Fail create {new_data[i]} data', e)
                             raise
                 delay()
         loguru.logger.info(f"Create Taiex is done.")

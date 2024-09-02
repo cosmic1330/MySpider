@@ -32,11 +32,10 @@ class DealDateModel:
                         try:
                             session.add(new_data[i])
                             session.commit()
-                            loguru.logger.success(f'[Success] create {new_data[i]} data')
-
+                            print(f'[Success] create {new_data[i]} data')
                         except Exception as e:
                             session.rollback()
-                            loguru.logger.error(f'[Fail] create {new_data[i]} data')
+                            loguru.logger.error(f'[Fail] create {new_data[i]} data', e)
                             raise
                 delay()
         loguru.logger.info(f"Create deal date is done.")
@@ -66,8 +65,7 @@ class DealDateModel:
                 session.commit()
             except Exception as e:
                 session.rollback()
-                loguru.logger.error(f'[Fail] create {year}/{month} data')
-                print(e)
+                loguru.logger.error(f'[Fail] create {year}/{month} data', e)
                 raise
 
             month += 1
@@ -106,6 +104,5 @@ class DealDateModel:
                 return []
             
         except Exception as e:
-            loguru.logger.error(f'[Fail] query {year}/{month} data')
+            loguru.logger.error(f'[Fail] query {year}/{month} data', e)
             raise
-            print(e)

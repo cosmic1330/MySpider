@@ -53,12 +53,12 @@ class MonthlyRevenueModel:
                                     temp['compare_cumulative_revenue'])
                             ))
                             session.commit()
-                            loguru.logger.success(
+                            print(
                                 f'[Success] create {stock_id} {year}/{month} monthly revenue data')
                     except Exception as e:
                         session.rollback()  # 回滾交易以清除未提交的更改
-                        loguru.logger.warning(
-                            f"[Skip] stockid:{stock_id} monthly_data:{year}/{month}")
+                        loguru.logger.error(
+                            f"[Skip] stockid:{stock_id} monthly_data:{year}/{month}", e)
                         break
                     year, month = li.find('div').find('div').text.split('/')
                     temp = {
@@ -82,7 +82,6 @@ class MonthlyRevenueModel:
             except Exception as e:
                 loguru.logger.error(
                     f'[Fail] create {stock_id} monthly revenue data', e)
-                print(e)
 
     def query_lose_data_twse(self):
         current_year = datetime.now().year
@@ -100,12 +99,12 @@ class MonthlyRevenueModel:
 
             # 寫入資料庫
             session.commit()
-            loguru.logger.success(
+            print(
                 'Success delete last month Monthly Revenue data')
         except Exception as e:
             # 發生例外錯誤，還原交易
             session.rollback()
-            loguru.logger.error('Fail delete last month Monthly Revenue data')
+            loguru.logger.error('Fail delete last month Monthly Revenue data', e)
 
         # 所有可能的年月組合
         before_combinations = [(year, month) for year in range(
@@ -130,7 +129,7 @@ class MonthlyRevenueModel:
                     loguru.logger.error(
                         f'Fail create {data.stock_id} {year}/{month} monthly revenue data', e)
 
-            loguru.logger.success(
+            print(
                 f'Success create {year}/{month} monthly revenue data')
             delay()
         loguru.logger.info(f"Query monthly_revenue is done.")
@@ -159,7 +158,7 @@ class MonthlyRevenueModel:
                     loguru.logger.error(
                         f'Fail create {data.stock_id} {year}/{month} monthly revenue data', e)
 
-            loguru.logger.success(
+            print(
                 f'Success create {year}/{month} monthly revenue data')
             month += 1
             if month > 12:
@@ -193,7 +192,7 @@ class MonthlyRevenueModel:
             page1_data = self.getSoupData(page1_soup, year, month)
             return page0_data+page1_data
         except Exception as e:
-            loguru.logger.error(f'Fail query {year}/{month} data')
+            loguru.logger.error(f'Fail query {year}/{month} data', e)
             raise
             print(e)
 
