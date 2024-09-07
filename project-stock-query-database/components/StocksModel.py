@@ -21,7 +21,7 @@ class StocksModel:
             session.commit()
         except Exception as e:
             session.rollback()
-            loguru.logger.error('Fail update stock disabled', e)
+            loguru.logger.error('Fail update stock disabled, error:{e}')
 
         # create new stock ids
         datas1 = self.getListedStockIds()
@@ -46,7 +46,7 @@ class StocksModel:
                 except Exception as e:
                     session.rollback()
                     loguru.logger.error(
-                        f'Fail create stock id {data["stock_id"]} {data["stock_name"]}', e)
+                        f'Fail create stock id {data["stock_id"]} {data["stock_name"]}, error:{e}')
 
         loguru.logger.info(f"stocks id update is done.")
 
@@ -103,4 +103,4 @@ class StocksModel:
 
             return result
         except Exception as e:
-            print('fail request stock ids', e)
+            print('fail request stock ids, error:{e}')

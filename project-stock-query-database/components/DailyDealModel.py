@@ -24,7 +24,7 @@ class DailyDealModel:
             data = json.loads(json_string)['ta']
             print(data)
         except Exception as e:
-            print(f'fail request {stock_id} yahoo data', e)
+            print(f'fail request {stock_id} yahoo data, error:{e}')
 
     def repair_daily_deal(self):
         stocks = session.query(Stock.stock_id, Stock.stock_name).filter(
@@ -75,18 +75,21 @@ class DailyDealModel:
                             try:
                                 session.add(data)
                                 session.commit()
+                                print(f"[Success] create stock:{stock_id}({stock_name}) 『{data.transaction_date}』")
                             except Exception as e:
                                 session.rollback()
+                                print(f"[Fail] create stock:{stock_id}({stock_name})『{data.__dict__}』")
                                 loguru.logger.error(e)
             elif last_date is None:
                 new_data = self.queryYahooData(stock_id, stock_name)
+                print(f"[Info] create stock:{stock_id}({stock_name}) len:{len(new_data)}")
                 try:
                     session.add_all(new_data)
                     session.commit()
                 except Exception as e:
                     session.rollback()
                     loguru.logger.error(
-                        f"daily_deal stock {stock_id} {stock_name} initial fail", e)
+                        f"daily_deal stock {stock_id} {stock_name} initial fail, error:{e}")
         loguru.logger.info("get loss daily deal data done.")
 
     # query loss date from twse
@@ -105,7 +108,7 @@ class DailyDealModel:
             except Exception as e:
                 session.rollback()
                 loguru.logger.error(
-                    f"stock {stock_id} {stock_name} initial fail", e)
+                    f"stock {stock_id} {stock_name} initial fail, error:{e}")
         loguru.logger.info("initial daily deal data success")
 
     @classmethod
@@ -140,7 +143,7 @@ class DailyDealModel:
                     for item in data if start_date < item['t'] <= end_date]
             return result
         except Exception as e:
-            print(f'fail request {stock_id} yahoo data', e)
+            print(f'fail request {stock_id} yahoo data, error:{e}')
 
     def queryTwseData(self, date, stock_id):
         url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=csv&date={date}&stockNo={stock_id}"

@@ -42,16 +42,16 @@ class EpsModle:
                         ))
                         session.commit()
                         print(
-                            f"[Success] create {stock_id} season eps.")
+                            f"[Success] create {stock_id} {season} eps.")
                     except IntegrityError as e:
                         session.rollback()  # 回滾交易以清除未提交的更改
                         loguru.logger.error(
-                            f"[Skip] stockid:{stock_id} season:{season}", e)
+                            f"[Skip] stockid:{stock_id} season:{season}, error:{e}")
                         break
 
             except Exception as e:
                 loguru.logger.error(
-                    f"[Fail] query stock {stock_id}", e)
+                    f"[Fail] query stock {stock_id}, error:{e}")
 
     def check_eps_count(self):
         return session.query(Eps).count()
@@ -71,10 +71,11 @@ class EpsModle:
                 try:
                     session.add(new_eps)
                     session.commit()
+                    print(f"[Success] create{data['stock_id']}({data['stock_name']}) {data['season']} season eps.")
                 except IntegrityError as e:
                     session.rollback()  # 回滾交易以清除未提交的更改
                     loguru.logger.error(
-                        f"Skipping duplicate entry for season {season} stockid {data['stock_id']}", e)
+                        f"[Skip] duplicate entry for season {season} stockid {data['stock_id']}, error:{e}")
             print(f"{season} season eps is done.")
 
     @staticmethod
@@ -178,7 +179,7 @@ class EpsModle:
                 eps.append(data)
             return eps
         except Exception as e:
-            print('fail request season eps', e)
+            print('fail request season eps, error:{e}')
 
     @classmethod
     def replace(cls):

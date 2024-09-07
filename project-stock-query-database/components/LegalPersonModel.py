@@ -1,4 +1,4 @@
-from middleware.orm.models import LegalPerson, DealDate
+from middleware.orm.models import LegalPerson, DealDate, Stock
 from middleware.orm.database import session
 from datetime import datetime
 from utils.delay import delay
@@ -7,6 +7,8 @@ import requests
 import json
 from sqlalchemy import func
 from decimal import Decimal
+from bs4 import BeautifulSoup
+
 
 
 class LegalPersonModel:
@@ -14,6 +16,45 @@ class LegalPersonModel:
         pass
 
     def query_lose_data(self):
+        stocks = session.query(Stock.stock_id, Stock.stock_name).filter(
+            Stock.enabled == True).all()
+        for (stock_id, stock_name) in stocks:
+            print(f"取得{stock_id} {stock_name}缺少的營收資料")
+            try:
+                # 取得最新資料
+                r = requests.get(
+                    f'https://tw.stock.yahoo.com/quote/{stock_id}.TW/institutional-trading')
+                # 將網頁資料以html.parser
+                soup = BeautifulSoup(r.text, "html.parser")
+                ul = soup.find_all('ul', class_="List(n)")
+                lis = ul[1].find_all('li', class_="List(n)")
+                for _, li in enumerate(lis):
+                    try:
+                        divs = li.find_all('div')
+                        if (len(divs) == 0):
+                            break
+                        new_data = LegalPerson(
+                            transaction_date=divs[1].text,
+                            stock_id=stock_id,
+                            stock_name=stock_name,
+                            foreign_investors=int(divs[3].text.replace(',', ''))*1000,
+                            investment_trust=int(divs[4].text.replace(',', ''))*1000,
+                            dealer=int(divs[5].text.replace(',', ''))*1000,
+                        )
+                        session.add(new_data)
+                        session.commit()
+                        print(f"[Success] create {stock_id} {stock_name} 『{divs[1].text}』 legal person data")
+                    except Exception as e:
+                        session.rollback()  # 回滾交易以清除未提交的更改
+                        print(e)
+                        loguru.logger.error(
+                            f"[Skip] stockid:{stock_id} date:{divs[1].text} data:{new_data.__dict__}")
+                        break
+            except Exception as e:
+                loguru.logger.error(
+                    f'[Fail] create {stock_id} legal person data, error:{e}')
+
+    def query_lose_data_twse(self):
         dealdate_last_date = session.query(DealDate.transaction_date).order_by(
             DealDate.transaction_date.desc()).first()
         legalperson_date = session.query(LegalPerson.transaction_date).order_by(
@@ -39,7 +80,7 @@ class LegalPersonModel:
                     print(f"[Success] create {item[0]} - {date[0]} data")
                 except Exception as e:
                     session.rollback()
-                    loguru.logger.error(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。", e)
+                    loguru.logger.error(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。, error:{e}')")
             delay()
         loguru.logger.success("query legal person data success")
 
@@ -66,7 +107,7 @@ class LegalPersonModel:
                     session.commit()
                 except Exception as e:
                     session.rollback()  # 回滾事務
-                    loguru.loggering(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。", e)
+                    loguru.loggering(f"無法添加對象「{item[0]}」，可能是因為重複鍵或其他完整性錯誤。, error:{e}')")
             delay()
         loguru.logger.success("initial legal person data success")
 
@@ -80,4 +121,4 @@ class LegalPersonModel:
             else:
                 return response.json()['data']
         except Exception as e:
-            print(f'fail request {date} legal person data', e)
+            print(f'fail request {date} legal person data, error:{e}')
