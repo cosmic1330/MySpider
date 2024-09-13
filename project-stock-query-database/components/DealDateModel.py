@@ -17,6 +17,7 @@ class DealDateModel:
         db_year = db_date[0].year
         db_month = db_date[0].month
         print("資料庫最大年月日:", db_date)
+        
         for year in range(db_year, current_year+1):
             for month in range(1, 13):
                 

@@ -8,6 +8,9 @@ import json
 from sqlalchemy import func
 from decimal import Decimal
 from bs4 import BeautifulSoup
+import concurrent.futures
+
+
 
 
 
@@ -15,11 +18,59 @@ class LegalPersonModel:
     def __init__(self):
         pass
 
+    def fetch(self, stock_id, stock_name):
+        result = []
+        try:
+            # 取得最新資料
+            r = requests.get(
+                f'https://tw.stock.yahoo.com/quote/{stock_id}.TW/institutional-trading')
+            # 將網頁資料以html.parser
+            soup = BeautifulSoup(r.text, "html.parser")
+            ul = soup.find_all('ul', class_="List(n)")
+            lis = ul[1].find_all('li', class_="List(n)")
+            for _, li in enumerate(lis):
+                divs = li.find_all('div')
+                if (len(divs) == 0):
+                    break
+                new_data = LegalPerson(
+                    transaction_date=divs[1].text,
+                    stock_id=stock_id,
+                    stock_name=stock_name,
+                    foreign_investors=int(divs[3].text.replace(',', ''))*1000,
+                    investment_trust=int(divs[4].text.replace(',', ''))*1000,
+                    dealer=int(divs[5].text.replace(',', ''))*1000,
+                )
+                result.append(new_data)
+        except Exception as e:
+            loguru.logger.error(
+                f'[Fail] fetch {stock_id} legal person data, error:{e}')
+        return result
+
+
+    def query_lose_data_in_batchs(self):
+        results = []
+        batch_size=5
+        stocks = session.query(Stock.stock_id, Stock.stock_name).filter(
+            Stock.enabled == True).all()
+        for i in range(0, len(stocks), batch_size):
+            batch = stocks[i:i + batch_size]
+            with concurrent.futures.ThreadPoolExecutor(max_workers=batch_size) as executor:
+       
+                futures = [executor.submit(self.fetch, stock_id, stock_name) for (stock_id, stock_name) in batch]
+                for future in concurrent.futures.as_completed(futures):
+                    results.append(future.result())
+            
+            # 在每个批次完成后打印结果
+            print(f"Batch {i//batch_size + 1} results:")
+            for result in results:
+                print(result)
+            results = []
+
     def query_lose_data(self):
         stocks = session.query(Stock.stock_id, Stock.stock_name).filter(
             Stock.enabled == True).all()
         for (stock_id, stock_name) in stocks:
-            print(f"取得{stock_id} {stock_name}缺少的營收資料")
+            print(f"取得{stock_id} {stock_name}缺少的法人資料")
             try:
                 # 取得最新資料
                 r = requests.get(
