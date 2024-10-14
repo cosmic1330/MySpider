@@ -95,11 +95,13 @@ class LegalPersonModel:
                         session.add(new_data)
                         session.commit()
                         print(f"[Success] create {stock_id} {stock_name} 『{divs[1].text}』 legal person data")
-                    except Exception as e:
+                    except Exception as error:
                         session.rollback()  # 回滾交易以清除未提交的更改
-                        print(e)
-                        loguru.logger.error(
-                            f"[Skip] stockid:{stock_id} date:{divs[1].text} data:{new_data.__dict__}")
+                        # error.args[0]內有"duplicate key value violates unique constraint"
+                        if "duplicate key value violates unique constraint" in error.args[0]:
+                            break
+                        else:
+                            print(error.args[0])
                         break
             except Exception as e:
                 loguru.logger.error(
